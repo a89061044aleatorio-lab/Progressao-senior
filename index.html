@@ -1,0 +1,1971 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1C1113">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Progressão Sênior">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Progressão · Ramo Sênior</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Staatliches&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root{
+  --bg: #1C1113;
+  --surface: #281619;
+  --surface2: #351E22;
+  --line: #4A2A2F;
+  --text: #F2E7E5;
+  --muted: #B08B8E;
+  --gold: #A83246;
+  --gold-soft: rgba(168,50,70,0.20);
+  --moss: #D97E82;
+  --moss-soft: rgba(217,126,130,0.18);
+  --danger: #E0925C;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgba(168,50,70,0.10), transparent 60%),
+    var(--bg);
+  color:var(--text);
+  font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif;
+  min-height:100vh;
+  padding:0 0 60px;
+}
+
+/* ---- Header ---- */
+.header{
+  padding:28px 20px 22px;
+  border-bottom:1px solid var(--line);
+  position:relative;
+  overflow:hidden;
+}
+.header::before{
+  content:"";
+  position:absolute; inset:0;
+  background-image: repeating-linear-gradient(135deg, rgba(168,50,70,0.05) 0 2px, transparent 2px 14px);
+  pointer-events:none;
+}
+.eyebrow{
+  font-family:'JetBrains Mono','Courier New',monospace;
+  font-size:11px;
+  letter-spacing:.18em;
+  color:var(--gold);
+  text-transform:uppercase;
+  margin-bottom:6px;
+}
+h1{
+  font-family:'Staatliches','Arial Narrow',sans-serif;
+  font-weight:400;
+  font-size:38px;
+  letter-spacing:.02em;
+  margin:0 0 14px;
+  color:var(--text);
+  line-height:1;
+}
+
+/* compass / overall progress ring */
+.compass-row{
+  display:flex;
+  align-items:center;
+  gap:18px;
+  margin-top:10px;
+}
+.compass{
+  position:relative;
+  width:74px; height:74px;
+  flex-shrink:0;
+}
+.compass svg{transform:rotate(-90deg);}
+.compass-pct{
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'JetBrains Mono','Courier New',monospace;
+  font-size:15px;
+  font-weight:500;
+  color:var(--gold);
+}
+.compass-info .num{
+  font-family:'Staatliches','Arial Narrow',sans-serif;
+  font-size:22px;
+  color:var(--text);
+}
+.compass-info .label{
+  font-size:12px;
+  color:var(--muted);
+}
+.stage-row{
+  margin-top:16px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex-wrap:wrap;
+}
+.stage-pill{
+  display:flex; align-items:center; gap:5px;
+  font-family:'JetBrains Mono','Courier New',monospace;
+  font-size:10.5px;
+  color:var(--muted);
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:4px 9px 4px 7px;
+}
+.stage-pill.active{
+  color:var(--bg);
+  background:var(--gold);
+  border-color:var(--gold);
+  font-weight:600;
+}
+.stage-sep{ color:var(--line); font-size:11px; }
+.stage-note{
+  width:100%;
+  font-size:11.5px;
+  color:var(--muted);
+  margin-top:8px;
+}
+.tab-row{
+  display:flex;
+  gap:6px;
+  margin-top:18px;
+  border-top:1px solid var(--line);
+  padding-top:14px;
+}
+.tab-btn{
+  flex:1;
+  background:transparent;
+  border:1px solid var(--line);
+  color:var(--muted);
+  font-family:'Inter',sans-serif;
+  font-size:13px;
+  font-weight:600;
+  padding:9px 10px;
+  border-radius:8px;
+  cursor:pointer;
+}
+.tab-btn.active{
+  background:var(--grena, var(--gold));
+  color:var(--bg);
+  border-color:var(--gold);
+}
+.spec-frac-row{
+  display:flex;
+  align-items:baseline;
+  gap:8px;
+  margin:4px 4px 18px;
+}
+.spec-frac-row .num{
+  font-family:'Staatliches','Arial Narrow',sans-serif;
+  font-size:22px;
+  color:var(--text);
+}
+.spec-frac-row .label{
+  font-size:12px;
+  color:var(--muted);
+}
+.spec-area{
+  margin-top:18px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:var(--surface);
+  padding:14px 16px;
+}
+.spec-area:first-child{margin-top:0;}
+.spec-area-title{
+  font-family:'Staatliches','Arial Narrow',sans-serif;
+  font-size:17px;
+  letter-spacing:.01em;
+  margin-bottom:8px;
+}
+.spec-sub-label{
+  font-family:'JetBrains Mono','Courier New',monospace;
+  font-size:10.5px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin:12px 0 4px;
+}
+.item-text-row{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.spec-link{
+  font-family:'JetBrains Mono','Courier New',monospace;
+  font-size:10.5px;
+  color:var(--gold);
+  text-decoration:none;
+  white-space:nowrap;
+  flex-shrink:0;
+}
+.spec-link:active{opacity:.7;}
+
+/* ---- Layout ---- */
+.wrap{max-width:720px; margin:0 auto; padding:0 16px;}
+.search-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin:0 4px 18px;
+}
+.search-input{
+  flex:1;
+  background:var(--surface);
+  border:1px solid var(--line);
+  color:var(--text);
+  border-radius:8px;
+  padding:9px 12px;
+  font-size:13px;
+  font-family:'Inter',sans-serif;
+}
+.search-input:focus{ outline:none; border-color:var(--gold); }
+.search-input::placeholder{ color:var(--muted); }
+.search-count{
+  font-family:'JetBrains Mono','Courier New',monospace;
+  font-size:11px;
+  color:var(--muted);
+  white-space:nowrap;
+  flex-shrink:0;
+}
+.item.search-hide{ display:none; }
+.bloco.search-hide{ display:none; }
+.eixo.search-hide{ display:none; }
+.spec-area.search-hide{ display:none; }
+mark.search-mark{
+  background:var(--gold);
+  color:var(--bg);
+  border-radius:3px;
+  padding:0 1px;
+}
+.intro-note{
+  font-size:13px;
+  color:var(--muted);
+  margin:16px 4px 22px;
+  line-height:1.5;
+  border-left:2px solid var(--gold);
+  padding-left:10px;
+}
+
+/* ---- Eixo section ---- */
+.eixo{
+  margin-top:22px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:var(--surface);
+  overflow:hidden;
+}
+.eixo-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:16px 16px;
+  cursor:pointer;
+  user-select:none;
+}
+.eixo-head:active{background:var(--surface2);}
+.eixo-title{
+  display:flex; align-items:baseline; gap:10px;
+}
+.eixo-num{
+  font-family:'JetBrains Mono','Courier New',monospace;
+  font-size:12px;
+  color:var(--gold);
+  border:1px solid var(--gold);
+  border-radius:4px;
+  padding:1px 6px;
+}
+.eixo-name{
+  font-family:'Staatliches','Arial Narrow',sans-serif;
+  font-size:20px;
+  letter-spacing:.01em;
+}
+.eixo-meta{
+  display:flex; align-items:center; gap:10px;
+  flex-shrink:0;
+}
+.eixo-frac{
+  font-family:'JetBrains Mono','Courier New',monospace;
+  font-size:12px;
+  color:var(--muted);
+}
+.chevron{
+  width:10px; height:10px;
+  border-right:2px solid var(--muted);
+  border-bottom:2px solid var(--muted);
+  transform:rotate(45deg);
+  transition:transform .2s ease;
+}
+.eixo.open .chevron{transform:rotate(-135deg);}
+.eixo-bar-track{
+  height:3px; background:var(--line);
+}
+.eixo-bar-fill{
+  height:100%;
+  background:var(--moss);
+  transition:width .3s ease;
+}
+.eixo-body{
+  max-height:0;
+  overflow:hidden;
+  transition:max-height .25s ease;
+}
+.eixo.open .eixo-body{max-height:none;}
+.eixo-body-inner{padding:6px 16px 16px;}
+
+/* Período de acolhida is flat (no blocos) */
+.plain-list{padding:2px 0;}
+
+/* ---- Bloco ---- */
+.bloco{
+  margin-top:16px;
+  padding-top:14px;
+  border-top:1px dashed var(--line);
+}
+.bloco:first-child{border-top:none; margin-top:6px;}
+.bloco-name{
+  font-weight:600;
+  font-size:14.5px;
+  color:var(--text);
+  margin-bottom:2px;
+}
+.bloco-desc{
+  font-size:12.5px;
+  color:var(--muted);
+  line-height:1.45;
+  margin-bottom:10px;
+}
+.section-label{
+  font-family:'JetBrains Mono','Courier New',monospace;
+  font-size:10.5px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin:12px 0 6px;
+}
+
+/* ---- Item ---- */
+.item{
+  display:flex;
+  gap:10px;
+  padding:9px 8px;
+  border-radius:8px;
+  align-items:flex-start;
+}
+.item:hover{background:var(--surface2);}
+.item.checked{background:var(--moss-soft);}
+.chk{
+  width:20px; height:20px;
+  border-radius:5px;
+  border:1.5px solid var(--muted);
+  flex-shrink:0;
+  margin-top:1px;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer;
+  background:transparent;
+  transition:background .15s, border-color .15s;
+}
+.item.checked .chk{
+  background:var(--moss);
+  border-color:var(--moss);
+}
+.chk svg{width:12px;height:12px;opacity:0;transition:opacity .1s;}
+.item.checked .chk svg{opacity:1;}
+.item-body{flex:1; min-width:0;}
+.item-text{
+  font-size:13.5px;
+  line-height:1.48;
+  cursor:pointer;
+}
+.item.checked .item-text{color:var(--muted); text-decoration:line-through; text-decoration-color:var(--line);}
+.item-date{
+  margin-top:6px;
+  display:flex; align-items:center; gap:6px;
+}
+.item-date input[type=date]{
+  background:var(--surface);
+  border:1px solid var(--line);
+  color:var(--muted);
+  border-radius:5px;
+  font-family:'JetBrains Mono','Courier New',monospace;
+  font-size:11.5px;
+  padding:3px 6px;
+  color-scheme: dark;
+}
+.item.checked .item-date input[type=date]{color:var(--text); border-color:var(--moss);}
+
+.ou-item{
+  margin-top:4px;
+  border:1px dashed var(--gold);
+  border-radius:8px;
+  background:var(--gold-soft);
+}
+.ou-tag{
+  font-family:'JetBrains Mono','Courier New',monospace;
+  font-size:10px;
+  color:var(--gold);
+  font-weight:700;
+  margin-right:6px;
+}
+.mod-tag{
+  display:inline-flex;
+  align-items:center;
+  gap:3px;
+  font-family:'JetBrains Mono','Courier New',monospace;
+  font-size:9.5px;
+  font-weight:700;
+  letter-spacing:.03em;
+  padding:2px 6px;
+  border-radius:20px;
+  margin-right:6px;
+  vertical-align:middle;
+  white-space:nowrap;
+}
+.mod-mar{
+  background:rgba(90,150,196,0.18);
+  color:#8FC1E8;
+  border:1px solid rgba(143,193,232,0.4);
+}
+.mod-ar{
+  background:rgba(201,162,39,0.18);
+  color:#E0BE5C;
+  border:1px solid rgba(224,190,92,0.4);
+}
+
+/* footer */
+.footer{
+  max-width:720px; margin:30px auto 0; padding:0 20px;
+  font-size:11.5px; color:var(--muted); line-height:1.6;
+  text-align:center;
+}
+.reset-btn{
+  display:block;
+  margin:18px auto 0;
+  background:transparent;
+  border:1px solid var(--line);
+  color:var(--muted);
+  font-family:'JetBrains Mono','Courier New',monospace;
+  font-size:11px;
+  padding:8px 14px;
+  border-radius:6px;
+  cursor:pointer;
+}
+.reset-btn:active{border-color:var(--danger); color:var(--danger);}
+
+.loading{
+  text-align:center;
+  padding:60px 20px;
+  color:var(--muted);
+  font-family:'JetBrains Mono','Courier New',monospace;
+  font-size:13px;
+}
+
+/* ---- Conta / Login ---- */
+.account-row{
+  margin-top:14px;
+}
+.account-btn{
+  background:transparent;
+  border:1px solid var(--gold);
+  color:var(--gold);
+  font-family:'JetBrains Mono','Courier New',monospace;
+  font-size:11px;
+  padding:6px 12px;
+  border-radius:20px;
+  cursor:pointer;
+}
+.modal-overlay{
+  position:fixed; inset:0;
+  background:rgba(0,0,0,0.6);
+  display:flex; align-items:center; justify-content:center;
+  z-index:100;
+  padding:20px;
+}
+.modal-box{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:22px;
+  width:100%; max-width:340px;
+}
+.modal-title{
+  font-family:'Staatliches','Arial Narrow',sans-serif;
+  font-size:20px;
+  margin-bottom:14px;
+}
+.modal-box input{
+  width:100%;
+  background:var(--bg);
+  border:1px solid var(--line);
+  color:var(--text);
+  border-radius:8px;
+  padding:10px 12px;
+  font-size:14px;
+  margin-bottom:10px;
+  font-family:'Inter',sans-serif;
+}
+.modal-actions{
+  display:flex; gap:8px; margin-top:4px;
+}
+.modal-actions button{
+  flex:1;
+  padding:10px;
+  border-radius:8px;
+  border:1px solid var(--gold);
+  background:var(--gold);
+  color:var(--bg);
+  font-weight:600;
+  font-size:13px;
+  cursor:pointer;
+}
+.modal-actions button#authSignUp{
+  background:transparent;
+  color:var(--gold);
+}
+.modal-note{
+  font-size:12px;
+  color:var(--muted);
+  margin-top:10px;
+  min-height:14px;
+}
+.evo-card{
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:var(--surface);
+  padding:14px 12px 10px;
+  margin-bottom:16px;
+}
+.evo-card-title{
+  font-family:'Staatliches','Arial Narrow',sans-serif;
+  font-size:17px;
+  margin:0 4px 6px;
+}
+.evo-legend{
+  display:flex; gap:14px; margin:0 4px 6px;
+  font-size:11px; color:var(--muted);
+}
+.evo-legend i{
+  display:inline-block; width:10px; height:10px; border-radius:2px;
+  margin-right:5px; vertical-align:-1px;
+}
+.evo-stats{
+  display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px;
+}
+.evo-stat{
+  border:1px solid var(--line); border-radius:10px; background:var(--surface);
+  padding:12px;
+}
+.evo-stat .n{
+  font-family:'Staatliches','Arial Narrow',sans-serif; font-size:26px; color:var(--text);
+}
+.evo-stat .l{ font-size:11.5px; color:var(--muted); }
+.evo-recent{
+  display:flex; align-items:center; gap:10px; padding:8px 4px;
+  border-top:1px dashed var(--line); font-size:12.5px;
+}
+.evo-recent:first-of-type{border-top:none;}
+.evo-recent .d{
+  font-family:'JetBrains Mono','Courier New',monospace; font-size:10.5px;
+  color:var(--gold); flex-shrink:0;
+}
+.evo-recent .t{
+  flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.evo-empty{ text-align:center; color:var(--muted); padding:50px 20px; font-size:13px; }
+.modal-link{
+  display:block;
+  width:100%;
+  margin-top:12px;
+  background:transparent;
+  border:none;
+  color:var(--gold);
+  font-size:12px;
+  text-decoration:underline;
+  padding:4px;
+  cursor:pointer;
+}
+.modal-close{
+  width:100%;
+  margin-top:10px;
+  background:transparent;
+  border:none;
+  color:var(--muted);
+  font-size:12px;
+  padding:8px;
+  cursor:pointer;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="wrap">
+    <div class="eyebrow">Progressão pessoal</div>
+    <h1>Ramo Sênior</h1>
+    <div class="compass-row">
+      <div class="compass">
+        <svg width="74" height="74" viewBox="0 0 74 74">
+          <circle cx="37" cy="37" r="31" fill="none" stroke="var(--line)" stroke-width="6"/>
+          <circle id="ringFill" cx="37" cy="37" r="31" fill="none" stroke="var(--gold)" stroke-width="6"
+            stroke-linecap="round" stroke-dasharray="194.8" stroke-dashoffset="194.8"/>
+        </svg>
+        <div class="compass-pct" id="pctLabel">0%</div>
+      </div>
+      <div class="compass-info">
+        <div class="num" id="fracLabel">0 / 0</div>
+        <div class="label">itens marcados no total</div>
+      </div>
+    </div>
+    <div class="stage-row" id="stageRow"></div>
+    <div class="account-row">
+      <button class="account-btn" id="accountBtn">Entrar</button>
+    </div>
+    <div class="tab-row">
+      <button class="tab-btn active" id="tabProgressaoBtn" data-tab="progressao">Progressão</button>
+      <button class="tab-btn" id="tabEspecialidadesBtn" data-tab="especialidades">Especialidades</button>
+      <button class="tab-btn" id="tabEvolucaoBtn" data-tab="evolucao">Evolução</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="authModal" style="display:none">
+  <div class="modal-box">
+    <div class="modal-title">Sua conta</div>
+    <input type="email" id="authEmail" placeholder="E-mail" autocomplete="email">
+    <input type="password" id="authPassword" placeholder="Senha (mín. 6 caracteres)" autocomplete="current-password">
+    <div class="modal-actions">
+      <button id="authSignUp">Criar conta</button>
+      <button id="authSignIn">Entrar</button>
+    </div>
+    <button class="modal-link" id="authForgot">Esqueci minha senha</button>
+    <div class="modal-note" id="authError"></div>
+    <button class="modal-close" id="authClose">Fechar</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="recoveryModal" style="display:none">
+  <div class="modal-box">
+    <div class="modal-title">Criar nova senha</div>
+    <input type="password" id="recoveryPassword" placeholder="Nova senha (mín. 6 caracteres)" autocomplete="new-password">
+    <div class="modal-actions">
+      <button id="recoverySave">Salvar nova senha</button>
+    </div>
+    <div class="modal-note" id="recoveryError"></div>
+  </div>
+</div>
+
+<div class="wrap" id="viewProgressao">
+  <div class="intro-note">Toque no item para marcar como concluído e registre a data. Um bloco só fecha quando todas as Ações Fixas + o número exigido de Variáveis (ou a especialidade "OU") estiverem marcados. Seu progresso fica salvo automaticamente — e sincronizado se você estiver logado.</div>
+  <div class="search-row">
+    <input type="text" id="searchProgressao" class="search-input" placeholder="Buscar por uma palavra...">
+    <span class="search-count" id="searchCountProgressao"></span>
+  </div>
+  <div id="content" class="loading">Carregando sua progressão…</div>
+  <button class="reset-btn" id="resetBtn">Limpar todo o progresso</button>
+  <div class="footer">Baseado em "Progressão — Ramo Sênior 2026". Itens "OU" são alternativas equivalentes às ações variáveis do bloco.</div>
+</div>
+
+<div class="wrap" id="viewEspecialidades" style="display:none">
+  <div class="intro-note">Marque as especialidades e insígnias que você já conquistou, com a data. Toque em "Ver requisitos" para abrir o Guia oficial e navegar até a especialidade — o leitor não permite link direto pra cada página, então você vai precisar procurar dentro dele.</div>
+  <div class="spec-frac-row">
+    <div class="num" id="specFracLabel">0 / 0</div>
+    <div class="label">especialidades e insígnias conquistadas</div>
+  </div>
+  <div class="search-row">
+    <input type="text" id="searchEspecialidades" class="search-input" placeholder="Buscar por uma palavra...">
+    <span class="search-count" id="searchCountEspecialidades"></span>
+  </div>
+  <div id="specContent" class="loading">Carregando…</div>
+  <button class="reset-btn" id="specResetBtn">Limpar especialidades marcadas</button>
+  <div class="footer">Lista compilada a partir das opções "OU" citadas na Progressão — Ramo Sênior 2026. Para requisitos completos de cada uma, consulte o Guia de Especialidades e Insígnias oficial.</div>
+</div>
+
+<div class="wrap" id="viewEvolucao" style="display:none">
+  <div class="intro-note">Sua evolução ao longo do tempo, calculada pelas datas dos itens e especialidades que você marcou (Progressão + Especialidades).</div>
+  <button class="reset-btn" id="exportPdfBtn" style="border-color:var(--gold);color:var(--gold);margin-bottom:18px;">📄 Baixar resumo em PDF</button>
+  <div id="evoContent"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const DATA = [
+  {
+    id: "acolhida",
+    eixo: true,
+    name: "Período de Acolhida",
+    sub: "(Antigo \"Período Introdutório\")",
+    flat: true,
+    blocos: [{ id:"acolhida-b", items: [
+      { id:"ac-1", text:"Participar das atividades com sua patrulha e com a tropa, conhecendo suas estruturas e seu funcionamento." },
+      { id:"ac-2", text:"Utilizar o lenço escoteiro sabendo o seu significado e conhecer a história da sua UEL (Unidade Escoteira Local) e do Escotismo." },
+      { id:"ac-3", text:"Reconhecer e responder aos apitos e sinais manuais próprios do ramo." },
+      { id:"ac-4", text:"Fazer parte de uma patrulha, participar do seu grito, usar suas cores e símbolos, utilizar o distintivo de patrulha, saber quem é seu monitor e desempenhar um encargo." },
+      { id:"ac-5", text:"Entender e usar o lema do escoteiro, o sinal, a saudação e o aperto de mão." },
+      { id:"ac-6", text:"Saber quais são e como conquistar os distintivos do Ramo Sênior e conhecer o uniforme ou vestuário escoteiro usado na tropa." },
+      { id:"ac-7", text:"Conhecer a Lei e Promessa Escoteira, sendo capaz de explicar para o seu monitor e para um escotista a sua importância e valores. Sentir-se pronto para assumir esse compromisso." }
+    ]}]
+  },
+  {
+    id: "eixo1", eixo:true, num:"Eixo 1", name:"Habilidades para a Vida",
+    blocos: [
+      { id:"e1b1", name:"Bloco 1 — Aprendizagem contínua e desenvolvimento vocacional",
+        desc:"Conhecer diferentes temas, planejar estratégias para aprender de maneira eficaz e utilizar novos conceitos e recursos para melhorar seus resultados. Aprofundar seus conhecimentos em áreas de interesse, descobrindo e explorando sua vocação.",
+        fixas:[
+          {id:"e1b1f1", text:"Conquistar, no Ramo Sênior, uma especialidade sobre um tema de seu interesse e que seja um conhecimento novo."},
+          {id:"e1b1f2", tag:"mar", text:"Organizar e realizar, com a patrulha, uma visita a um porto, marina ou iate clube, conhecendo seu funcionamento, tipos de embarcações e sinalizações de tráfego."},
+          {id:"e1b1f3", tag:"ar", text:"Organizar e realizar, com a patrulha, uma visita a um aeroporto ou aeroclube, identificando tipos de aeronaves, procedimentos de pouso e decolagem, e sinalização de pista."}
+        ],
+        varLabel:"Realizar três ações dentre as listadas a seguir",
+        variaveis:[
+          {id:"e1b1v1", text:"Explorar diferentes áreas profissionais participando de uma Feira de Profissões ou entrevistando profissionais da área de interesse, investigando os caminhos percorridos, os desafios enfrentados e as motivações que os levaram à escolha da carreira."},
+          {id:"e1b1v2", text:"Engajar-se em atividades voluntárias ou estágios em instituições que despertem interesse, permitindo a vivência prática, o desenvolvimento de habilidades e a compreensão do ambiente profissional e comunitário."},
+          {id:"e1b1v3", text:"Participar de palestras, workshops ou vivências voltadas à orientação vocacional, planejamento de carreira e desenvolvimento pessoal, explorando ferramentas que ajudem na identificação de talentos, interesses e estratégias para o futuro profissional."},
+          {id:"e1b1v4", text:"Organizar uma atividade para a patrulha ou tropa voltada para escolha vocacional."},
+          {id:"e1b1v5", text:"Organizar, para sua tropa ou patrulha, uma oficina, curso ou palestra sobre um tema de seu interesse."},
+          {id:"e1b1v6", text:"Participar de feiras, mostras ou eventos escolares/científicos, fora do Movimento Escoteiro, apresentando trabalhos ou projetos desenvolvidos."}
+        ],
+        ou:{id:"e1b1ou", text:"Conquistar ao menos uma das seguintes especialidades ou insígnias: Especialidades de Gastronomia, Tecnologia, Educação, Idiomas; ou Insígnia do Aprender, Insígnia da Modalidade do Mar (Naval), Insígnia da Modalidade do Ar (Aeronauta)."}
+      },
+      { id:"e1b2", name:"Bloco 2 — Autonomia e Liderança",
+        desc:"Assumir responsabilidades dentro de sua patrulha ou equipe de interesse, trabalhando junto aos colegas para alcançar objetivos. Organizar e administrar recursos para seus projetos, definir um orçamento e executar ações para cumpri-lo. Planejar, realizar e avaliar atividades individuais e coletivas, tomando decisões com consciência e responsabilidade.",
+        fixas:[
+          {id:"e1b2f1", text:"Conhecer o material individual e de patrulha necessário para diferentes tipos de excursões (acampamento, acantonamento, volante, fixo) e saber organizá-lo na mochila."},
+          {id:"e1b2f2", tag:"mar", text:"Construir e navegar com sua patrulha ou equipe de interesse em embarcação a vela ou remo, identificando as partes (proa, popa, bombordo, boreste), utilizando o colete salva-vidas e seguindo as regras de segurança."}
+        ],
+        varLabel:"Realizar quatro ações dentre as listadas a seguir",
+        variaveis:[
+          {id:"e1b2v1", text:"Participar ativamente do planejamento, da execução e da avaliação de atividades da patrulha, tropa ou equipe de interesse, sendo bem avaliado pelos companheiros e escotistas."},
+          {id:"e1b2v2", text:"Desenvolver o planejamento orçamentário de uma atividade de patrulha, equipe de interesse ou tropa."},
+          {id:"e1b2v3", text:"Utilizar transporte coletivo urbano para uma atividade externa de patrulha."},
+          {id:"e1b2v4", text:"Implementar uma estratégia, incluindo a parte financeira, para alcançar uma meta pessoal, compartilhando sua experiência com sua patrulha."},
+          {id:"e1b2v5", text:"Planejar e executar um projeto de captação de recursos para participação em uma atividade escoteira ou realização de um projeto pessoal."},
+          {id:"e1b2v6", text:"Assumir e desempenhar diferentes encargos na patrulha, sendo bem avaliado pela sua patrulha."},
+          {id:"e1b2v7", text:"Planejar e conduzir um grande jogo para a tropa, com apoio da patrulha ou equipe de interesse."}
+        ],
+        ou:{id:"e1b2ou", text:"Conquistar ao menos uma das seguintes especialidades: Empreendedorismo e negócios, Finanças e economia, Liderança e gestão, Viagens."}
+      },
+      { id:"e1b3", name:"Bloco 3 — Criatividade e Inovação",
+        desc:"Expressar suas ideias, talentos e criatividade por meio da arte, da escrita, da música ou de outras formas de criação. Buscar inovar em seus projetos e iniciativas, explorando novas possibilidades além daquilo que já está acostumado a fazer.",
+        fixas:[
+          {id:"e1b3f1", text:"Durante um acampamento, planejar e executar pioneirias inovadoras de médio ou grande porte."},
+          {id:"e1b3f2", tag:"ar", text:"Organizar um torneio aéreo com categorias como avião de papel, pipa, planador e foguete."}
+        ],
+        varLabel:"Realizar três ações dentre as listadas a seguir",
+        variaveis:[
+          {id:"e1b3v1", text:"Organizar e conduzir um Fogo de Conselho ou show de talentos para a tropa, UEL ou comunidade."},
+          {id:"e1b3v2", text:"Organizar uma noite cultural para sua patrulha ou tropa."},
+          {id:"e1b3v3", text:"Produzir um curta metragem ou vídeo criativo sobre Escotismo."},
+          {id:"e1b3v4", text:"Organizar uma apresentação artística ou cultural voltada à comunidade."},
+          {id:"e1b3v5", text:"Planejar e realizar mostra sobre um tema de seu interesse, produzindo e curando registros (fotos, vídeos, áudios, textos e objetos) para apresentação à tropa ou comunidade."},
+          {id:"e1b3v6", text:"Participar de concursos culturais, literários ou artísticos locais, representando a tropa."},
+          {id:"e1b3v7", tag:"ar", text:"Construir uma versão simplificada de 1 (um) \"horizonte artificial\" funcional, que permita visualizar a inclinação do instrumento em 2 (dois) eixos (arfagem e rolagem)."}
+        ],
+        ou:{id:"e1b3ou", text:"Conquistar a especialidade de Comunicações ou a Insígnia Inovadores de Impacto."}
+      },
+      { id:"e1b4", name:"Bloco 4 — Inteligência Emocional",
+        desc:"Reconhecer e lidar com seus sentimentos, respeitando suas próprias emoções, expressando-se de forma equilibrada e assertiva.",
+        fixas:[
+          {id:"e1b4f1", text:"Durante as atividades, reconhecer situações que comprometam a integridade física ou emocional, sabendo como agir e a quem recorrer, mantendo-se calmo e em segurança."},
+          {id:"e1b4f2", text:"Praticar feedback construtivo durante as atividades, expressando opiniões de forma assertiva e respeitosa."}
+        ],
+        varLabel:"Realizar quatro ações dentre as listadas a seguir",
+        variaveis:[
+          {id:"e1b4v1", text:"Identificar as mudanças de emoção repentinas, equilibrando as decisões e reações, buscando agir de maneira respeitosa."},
+          {id:"e1b4v2", text:"Envolver-se em atividades aventureiras com segurança, conhecendo seus limites e enfrentando seus medos."},
+          {id:"e1b4v3", text:"Identificar as situações que causam estresse ou desconforto e as formas e ferramentas de solucioná-las, respeitando seus limites."},
+          {id:"e1b4v4", text:"Negociar responsabilidades familiares e pessoais de forma respeitosa e madura."},
+          {id:"e1b4v5", text:"Conduzir dinâmicas de confiança e cooperação que envolvam lidar com frustrações e celebrar conquistas coletivas."}
+        ]
+      }
+    ]
+  },
+  {
+    id:"eixo2", eixo:true, num:"Eixo 2", name:"Meio Ambiente",
+    blocos:[
+      { id:"e2b1", name:"Bloco 1 — Consumo Responsável",
+        desc:"Compreender como o consumo responsável influencia o futuro do planeta e adotar hábitos que ajudam a garantir recursos para as próximas gerações.",
+        varLabel:"Realizar quatro ações dentre as listadas a seguir",
+        variaveis:[
+          {id:"e2b1v1", text:"Liderar a separação de resíduos recicláveis e orgânicos em uma festa da UEL, comunidade ou eventos regionais e nacionais."},
+          {id:"e2b1v2", text:"Visitar uma estação de tratamento de esgoto, aterro sanitário ou cooperativa de reciclagem e discutir as questões ambientais e de consumo."},
+          {id:"e2b1v3", text:"Desenvolver um projeto individual ou coletivo sobre o descarte correto de materiais eletrônicos na UEL, comunidade ou escola."},
+          {id:"e2b1v4", text:"Organizar pelo menos uma oficina, debate ou workshop para a seção sobre um dos seguintes temas: Cruelty-free (produtos livres de exploração animal); Vegetarianismo e Veganismo; Upcycling (reaproveitamento de itens descartados); Obsolescência Programada e Perceptiva; Microplástico."},
+          {id:"e2b1v5", text:"Em um acampamento, executar uma receita com cascas, talos ou sobras."},
+          {id:"e2b1v6", text:"Organizar um brechó beneficente ou feira de trocas em sua UEL ou comunidade."},
+          {id:"e2b1v7", text:"Participar de visita a cooperativa de reciclagem ou projeto comunitário ligado à economia circular."}
+        ],
+        ou:{id:"e2b1ou", text:"Conquistar a especialidade de Agricultura Sustentável ou a Insígnia Reduzir, Reciclar, Reutilizar."}
+      },
+      { id:"e2b2", name:"Bloco 2 — Mudanças Climáticas",
+        desc:"Propor e organizar atividades e projetos para reduzir os impactos ambientais e combater as mudanças climáticas. Incentivar práticas sustentáveis no dia a dia e mobilizar outros para agir pelo meio ambiente.",
+        varLabel:"Realizar quatro ações dentre as listadas a seguir",
+        variaveis:[
+          {id:"e2b2v1", text:"Utilizar ferramentas de acompanhamento meteorológico para o planejamento de atividades ao ar livre."},
+          {id:"e2b2v2", text:"Desenvolver iniciativas ou projetos sobre mudanças climáticas e soluções sustentáveis."},
+          {id:"e2b2v3", text:"Organizar, com sua patrulha, uma atividade ecológica em área urbana, identificando problemas ambientais da localidade e apontando suas causas e possíveis soluções."},
+          {id:"e2b2v4", text:"Participar de clubes ou projetos voltados para sustentabilidade e mudanças climáticas."},
+          {id:"e2b2v5", text:"Utilizar e promover o uso do transporte coletivo, bicicleta ou caminhada em uma atividade escoteira e utilizar um meio de transporte alternativo de fonte de energia renovável."},
+          {id:"e2b2v6", text:"Planejar e executar, em patrulha ou equipe de interesse, um projeto comunitário de reaproveitamento de recursos naturais ou de uso de energias renováveis."}
+        ],
+        ou:{id:"e2b2ou", text:"Conquistar a especialidade de Sustentabilidade ou a Insígnia Escoteiros pela Energia Solar."}
+      },
+      { id:"e2b3", name:"Bloco 3 — Preservação da Biodiversidade",
+        desc:"Identificar os impactos das ações humanas na biodiversidade e atuar para proteger os ecossistemas, promovendo a preservação da fauna e flora.",
+        fixas:[
+          {id:"e2b3f1", text:"Participar de uma atividade em uma Área de Proteção Ambiental, reconhecendo fauna, flora e bioma local, identificando riscos e propondo soluções para preservação."},
+          {id:"e2b3f2", tag:"mar", text:"Conhecer o bioma aquático local, seus riscos e a importância de sua preservação."},
+          {id:"e2b3f3", tag:"ar", text:"Participar de uma atividade de observação de aves da região, identificando seus hábitos e a relação com os diferentes métodos de voo e aerodinâmica."}
+        ],
+        varLabel:"Realizar duas ações dentre as listadas a seguir",
+        variaveis:[
+          {id:"e2b3v1", text:"Participar de eventos sobre preservação da biodiversidade organizados por ONGs, escolas ou parques naturais."},
+          {id:"e2b3v2", text:"Colaborar em um projeto ou ação promovido por alguma ONG ambiental."},
+          {id:"e2b3v3", text:"Coletar e registrar dados sobre espécies locais, qualidade da água ou vegetação."},
+          {id:"e2b3v4", text:"Organizar um projeto individual ou coletivo sobre um dos seguintes temas: abrigos de animais silvestres, enriquecimento ambiental, reintegração de animais ou outra iniciativa de preservação da fauna."},
+          {id:"e2b3v5", text:"Organizar o plantio de árvores nativas em parceria com órgãos ambientais ou ONGs."},
+          {id:"e2b3v6", text:"Conduzir uma campanha de conscientização sobre preservação da fauna e flora em praças, escolas ou redes sociais da comunidade."},
+          {id:"e2b3v7", text:"Promover palestras ou oficinas abertas à comunidade sobre redução de impactos ambientais e proteção da biodiversidade."}
+        ],
+        ou:{id:"e2b3ou", text:"Conquistar a especialidade de Natureza e Ciências Naturais ou Educação Ambiental ou a Insígnia Campeões da Natureza."}
+      },
+      { id:"e2b4", name:"Bloco 4 — Vida ao Ar Livre",
+        desc:"Aproveitar ao máximo as atividades ao ar livre e sua conexão com a natureza, sempre cuidando do ambiente e reduzindo seu impacto sobre ele.",
+        fixas:[
+          {id:"e2b4f1", text:"Montar o campo de patrulha com pioneirias como mesa, canto do lenhador e pórtico, utilizando amarras adequadas."},
+          {id:"e2b4f2", text:"Aplicar os seguintes nós: direito, correr, lais de guia, volta do fiel, nó em oito, balso pelo seio, catau, volta do salteador e boca de lobo durante um acampamento de tropa ou patrulha, conhecendo suas funcionalidades."},
+          {id:"e2b4f3", text:"Escolher corretamente o local para montagem da barraca, incluindo técnicas de montagem, desmontagem e acondicionamento durante um acampamento de tropa ou patrulha."},
+          {id:"e2b4f4", text:"Manusear corretamente ferramentas de corte e sapa, zelando pela segurança e realizando reparos, durante um acampamento de tropa ou patrulha."},
+          {id:"e2b4f5", text:"Preparar e executar pelo menos três tipos de fogueiras, utilizando-as para preparar uma refeição mateira e zelando pela segurança, em um acampamento de tropa ou patrulha."},
+          {id:"e2b4f6", text:"Planejar e realizar ao menos uma excursão de patrulha em um ambiente natural."},
+          {id:"e2b4f7", text:"Planejar e realizar ao menos um acampamento de patrulha com técnicas de campismo de baixo impacto."},
+          {id:"e2b4f8", text:"Em atividade ao ar livre, orientar-se utilizando carta topográfica ou náutica e bússola, e utilizar métodos naturais e tecnológicos de orientação."},
+          {id:"e2b4f9", tag:"mar", text:"Utilizar nós de modalidade do mar, como lais de guia, nó de cunho, pinha de retinida e nó de defesa."}
+        ],
+        varLabel:"Realizar cinco ações dentre as listadas a seguir",
+        variaveis:[
+          {id:"e2b4v1", text:"Participar de um acampamento volante."},
+          {id:"e2b4v2", text:"Selecionar corretamente os materiais de campo para um acampamento de patrulha."},
+          {id:"e2b4v3", text:"Em conjunto com a sua patrulha, planejar e construir pelo menos uma das seguintes pioneirias: barraca suspensa, torre de observação ou ponte."},
+          {id:"e2b4v4", text:"Demonstrar conhecimento sobre processos de ancoragem e estiramento de cabos."},
+          {id:"e2b4v5", text:"Utilizar diferentes formas de acondicionamento de alimentos e técnicas de purificação de água em um acampamento."},
+          {id:"e2b4v6", text:"Durante um acampamento de patrulha ou tropa, pernoitar em um abrigo natural."},
+          {id:"e2b4v7", text:"Durante uma atividade aventureira, pernoitar uma noite em bivaque, abrigo natural ou ao relento."},
+          {id:"e2b4v8", text:"Participar de atividades como rafting, canoagem, rapel, espeleologia, escalada, trekking ou mountain bike."},
+          {id:"e2b4v9", text:"Participar de atividades aquáticas de exploração de corpos d'água naturais, respeitando os padrões de segurança."},
+          {id:"e2b4v10", text:"Participar de um acampamento organizado pela patrulha ou tropa de média (3 a 5 dias) ou longa (6 a 10 dias) duração."}
+        ],
+        ou:{id:"e2b4ou", text:"Conquistar ao menos uma das seguintes especialidades: Esportes de Aventura, Ecoturismo, Habilidades Escoteiras."}
+      }
+    ]
+  },
+  {
+    id:"eixo3", eixo:true, num:"Eixo 3", name:"Paz e Desenvolvimento",
+    blocos:[
+      { id:"e3b1", name:"Bloco 1 — Comunidade",
+        desc:"Planejar e coordenar projetos que geram impacto positivo na comunidade, dialogando com outras instituições, e promover ações concretas para o bem comum.",
+        fixas:[
+          {id:"e3b1f1", text:"Participar, sozinho, em patrulha ou equipe, de pelo menos 10 horas de ação comunitária com outras instituições locais."},
+          {id:"e3b1f2", text:"Capacitar-se em curso promovido por entidades de referência (defesa civil, cruz vermelha, corpo de bombeiros etc.) e estar preparado para atuar em crises humanitárias."}
+        ],
+        varLabel:"Realizar duas ações dentre as listadas a seguir",
+        variaveis:[
+          {id:"e3b1v1", text:"Identificar os riscos de desastres naturais na comunidade, conhecer protocolos de segurança e atuar de acordo com eles."},
+          {id:"e3b1v2", text:"Planejar uma atividade comunitária, como limpeza de praça, visita a uma instituição sem fins lucrativos ou revitalização de uma creche infantil ou lar de repouso de idosos, ou similar."},
+          {id:"e3b1v3", text:"Criar uma biblioteca comunitária móvel com livros doados."},
+          {id:"e3b1v4", text:"Organizar uma campanha de arrecadação (alimentos, roupas, livros) envolvendo diferentes setores da comunidade."},
+          {id:"e3b1v5", text:"Representar a tropa em fóruns, conselhos ou encontros comunitários, contribuindo com ideias e propostas."},
+          {id:"e3b1v6", text:"Promover ações de educação ambiental, saúde ou cidadania em parceria com outras instituições."}
+        ],
+        ou:{id:"e3b1ou", text:"Conquistar ao menos uma das seguintes especialidades ou insígnias: Especialidade de Desenvolvimento Comunitário, Ações Humanitárias, Inclusão e Acessibilidade, Insígnia do Desafio Comunitário, Insígnia Mensageiros da Paz, Insígnia/Reconhecimento \"Escoteiros do Mundo\"."}
+      },
+      { id:"e3b2", name:"Bloco 2 — Democracia",
+        desc:"Participar ativamente da democracia, engajando-se em debates, contribuindo na tomada de decisões e ajudando a construir soluções coletivas para desafios sociais.",
+        fixas:[
+          {id:"e3b2f1", text:"Participar ativamente das decisões do Conselho de Patrulha, contribuindo com ideias, votando e assumindo responsabilidades, respeitando os resultados."},
+          {id:"e3b2f2", text:"Participar ativamente das decisões da Assembleia de Tropa, contribuindo com ideias, votando e assumindo responsabilidades, respeitando os resultados."},
+          {id:"e3b2f3", text:"Participar da eleição do monitor da patrulha e das decisões dos encargos respeitando os resultados."}
+        ],
+        varLabel:"Realizar quatro ações dentre as listadas a seguir",
+        variaveis:[
+          {id:"e3b2v1", text:"Participar de Audiência Pública e consultas populares de temas de seu interesse promovidas pelo poder legislativo."},
+          {id:"e3b2v2", text:"Emitir o título de eleitor, compreendendo a importância dos processos democráticos do país e, em ano eleitoral, pesquisar sobre os candidatos e suas propostas."},
+          {id:"e3b2v3", text:"Planejar e executar uma campanha para educar outros jovens sobre temas como voto consciente e direitos do cidadão."},
+          {id:"e3b2v4", text:"Participar de ao menos uma Assembleia do Grupo Escoteiro."},
+          {id:"e3b2v5", text:"Participar ativamente de um Fórum de Grupo Escoteiro."},
+          {id:"e3b2v6", text:"Participar de grêmio estudantil ou conferências de juventude."},
+          {id:"e3b2v7", text:"Participar de pelo menos uma atividade da seção, como debates, estudos de caso ou \"júri simulado\", de forma respeitosa e contributiva."},
+          {id:"e3b2v8", text:"Participar de dinâmicas de mediação de conflitos, praticando a escuta ativa e construção de consensos."}
+        ],
+        ou:{id:"e3b2ou", text:"Conquistar ao menos uma das seguintes especialidades: Equidade, Políticas Públicas."}
+      },
+      { id:"e3b3", name:"Bloco 3 — Herança Cultural",
+        desc:"Compartilhar a herança cultural de sua comunidade e do seu país, organizando atividades e projetos que valorizam a história, os costumes e os saberes ancestrais dos povos originários brasileiros.",
+        fixas:[
+          {id:"e3b3f1", text:"Conduzir a cerimônia de abertura de uma atividade de patrulha ou tropa."},
+          {id:"e3b3f2", tag:"mar", text:"Participar corretamente do cerimonial de hastear e arriar a Bandeira Nacional, tocando o apito marinheiro."}
+        ],
+        varLabel:"Realizar cinco ações dentre as listadas a seguir",
+        variaveis:[
+          {id:"e3b3v1", text:"Organizar com sua patrulha uma expedição que promova o contato com culturas como Povos originários, Comunidades quilombolas, Comunidades ribeirinhas ou caiçaras, abordando língua, costumes, festividades e tradições, e debater formas de valorizar e preservar essas culturas."},
+          {id:"e3b3v2", text:"Organizar a recepção de membros do Movimento Escoteiro de outras localidades e apresentá-los aos principais pontos históricos e turísticos de seu município."},
+          {id:"e3b3v3", text:"Fazer tour em sua cidade, explorando pontos históricos e culturais como: Centro cultural, Biblioteca pública, Mercado municipal, Feiras típicas, Museus ou Marcos históricos, entre outros."},
+          {id:"e3b3v4", text:"Identificar os núcleos culturais de sua região e participar de atividades com eles (ex.: centro de tradições gaúchas, núcleos israelitas, associações de colônias imigrantes)."},
+          {id:"e3b3v5", text:"Apresentar uma forma de expressão artística da cultura popular brasileira em um Fogo de Conselho."},
+          {id:"e3b3v6", text:"Promover um festival com música, poesia, dança e literatura típicas de uma região para seu grupo escoteiro ou comunidade."},
+          {id:"e3b3v7", text:"Produzir, com sua patrulha, uma peça para uso cotidiano, utilizando técnicas de artesanato brasileiro."},
+          {id:"e3b3v8", text:"Apresentar a cultura da sua cidade em um evento regional, nacional ou internacional, como feira das cidades ou noite folclórica."}
+        ],
+        ou:{id:"e3b3ou", text:"Conquistar a especialidade de Cultura e Arte."}
+      },
+      { id:"e3b4", name:"Bloco 4 — Promoção da Paz",
+        desc:"Desenvolver projetos que promovem a paz, o respeito à diversidade, o diálogo entre diferentes culturas e crenças, reconhecendo e valorizando a pluralidade da humanidade.",
+        fixas:[
+          {id:"e3b4f1", text:"Participar de uma ação colaborativa sobre diferentes temas que envolvem a cultura de paz, tais como Direitos Humanos, Diálogo Inter-religioso, Refugiados e Imigrantes, Diversidades ou Inclusão."}
+        ],
+        varLabel:"Realizar cinco ações dentre as listadas a seguir",
+        variaveis:[
+          {id:"e3b4v1", text:"Organizar uma mesa redonda para outros jovens da comunidade sobre temas como Idolatria, Torcidas organizadas, Tribos urbanas, Intolerância religiosa ou Xenofobia."},
+          {id:"e3b4v2", text:"Participar de atividades que promovam a paz e compreensão entre as pessoas."},
+          {id:"e3b4v3", text:"Participar com a patrulha ou equipe de interesse de uma atividade inter-religiosa, conhecendo diferentes tradições de fé, dialogando sobre valores comuns e refletindo sobre respeito e diversidade espiritual."},
+          {id:"e3b4v4", text:"Participar de uma simulação das Nações Unidas em que os participantes representam diferentes países e debatem questões globais sobre direitos humanos, como a igualdade de gênero, a crise dos refugiados e a proteção ambiental."},
+          {id:"e3b4v5", text:"Organizar e realizar uma atividade com outra unidade escoteira e refletir o significado da fraternidade mundial escoteira."},
+          {id:"e3b4v6", text:"Organizar um \"Jantar Internacional\" com sua patrulha ou equipe de interesse, apresentando culinária, trajes, músicas e informações sobre o Escotismo de diferentes países."},
+          {id:"e3b4v7", text:"Participar com a patrulha, tropa ou equipe de interesse de um dia de atividades e jogos e/ou uma atividade de solidariedade com um grupo de jovens na comunidade em uma igreja, mesquita, sinagoga, templo etc."},
+          {id:"e3b4v8", text:"Desenvolver um momento inter-religioso na sua seção, grupo escoteiro ou comunidade."}
+        ],
+        ou:{id:"e3b4ou", text:"Conquistar ao menos uma das seguintes especialidades ou insígnias: Especialidades de Ciências Humanas, Direitos Humanos, Diversidades, Fé, Crenças e Diálogo Inter-religioso; ou Insígnia da Lusofonia, Insígnia do Cone Sul, Diálogos pela Paz."}
+      },
+      { id:"e3b5", name:"Bloco 5 — Valores",
+        desc:"Alinhar suas atitudes aos seus valores pessoais e aos princípios do Movimento Escoteiro, vivendo a Promessa e a Lei Escoteira de forma consciente e coerente.",
+        fixas:[
+          {id:"e3b5f1", text:"Avaliar com seus pares a vivência da Promessa e da Lei Escoteira e realizar o Compromisso Sênior."}
+        ],
+        varLabel:"Realizar duas ações dentre as listadas a seguir",
+        variaveis:[
+          {id:"e3b5v1", text:"Participar da avaliação da sua Progressão Pessoal e dos companheiros em patrulha."},
+          {id:"e3b5v2", text:"Explicar o significado da Lei e da Promessa Escoteiras aos novos membros da patrulha."},
+          {id:"e3b5v3", text:"Auxiliar um companheiro de patrulha a realizar seu Compromisso Sênior."},
+          {id:"e3b5v4", text:"Participar de um debate de casos reais de notícias ou situações sociais, analisando-os à luz dos valores escoteiros."}
+        ]
+      }
+    ]
+  },
+  {
+    id:"eixo4", eixo:true, num:"Eixo 4", name:"Saúde e Bem-estar",
+    blocos:[
+      { id:"e4b1", name:"Bloco 1 — Cuidado com o Corpo",
+        desc:"Reconhecer e valorizar suas habilidades físicas, se desafiar a superar limitações e cuidar da própria saúde com respeito ao seu corpo. Valorizar e respeitar a diversidade humana.",
+        fixas:[
+          {id:"e4b1f1", text:"Capacitar-se para atuar em primeiros socorros: atendimento a pequenos cortes, contusões e escoriações; avaliação de pressão arterial, pulso e temperatura; queimaduras, insolação, hipotermia e desidratação; picadas de animais peçonhentos; hemorragias externas e internas; imobilização de fraturas, entorses, controle cervical e traumatismo craniano; crises convulsivas, estados de choque e intoxicação; sinais de infarto ou AVC; engasgos e choque elétrico; RCP; bandagens, tipóias e transporte de feridos; uso do kit de primeiros socorros; acionamento de SAMU, bombeiros e polícia."},
+          {id:"e4b1f2", text:"Nas atividades da patrulha ou tropa, identificar condutas que possam colocar em risco a saúde física e mental, compartilhando medidas com os companheiros para mitigar esses riscos."}
+        ],
+        varLabel:"Realizar duas ações dentre as listadas a seguir",
+        variaveis:[
+          {id:"e4b1v1", text:"Experimentar atividades físicas ou modalidades esportivas diversas (coletivas, individuais, adaptadas) e refletir sobre a experiência."},
+          {id:"e4b1v2", text:"Pesquisar sobre saúde física e mental na juventude e apresentar propostas para a tropa melhorar seus hábitos."},
+          {id:"e4b1v3", text:"Conduzir oficinas ou jogos inclusivos que valorizem a diversidade de habilidades físicas do grupo."},
+          {id:"e4b1v4", text:"Participar de um workshop, palestra ou atividade sobre: perigos do uso de anabolizantes; perigos do uso de drogas, álcool, tabaco, cigarros eletrônicos etc.; distúrbios alimentares."},
+          {id:"e4b1v5", text:"Organizar o material de primeiros socorros da patrulha para diferentes atividades."},
+          {id:"e4b1v6", text:"Participar de workshop ou outra atividade relacionada à prevenção das Infecções Sexualmente Transmissíveis (IST)."}
+        ],
+        ou:{id:"e4b1ou", text:"Conquistar a especialidade de Saúde."}
+      },
+      { id:"e4b2", name:"Bloco 2 — Espiritualidade",
+        desc:"Refletir sobre o sentido da vida, encontrando inspiração na natureza, na solidariedade e na diversidade espiritual da sua comunidade. Buscar viver de acordo com seus valores, alinhando suas crenças às suas ações diárias.",
+        varLabel:"Realizar três ações dentre as listadas a seguir",
+        variaveis:[
+          {id:"e4b2v1", text:"Conduzir momentos de silêncio, oração ou meditação em atividades da tropa, valorizando a diversidade espiritual."},
+          {id:"e4b2v2", text:"Participar de projetos e atividades que permitam conhecer, atuar e dialogar com jovens de diferentes opções de fé e crenças."},
+          {id:"e4b2v3", text:"Colaborar em celebrações religiosas ou outras expressões de fé e espiritualidade de sua comunidade."},
+          {id:"e4b2v4", text:"Organizar um momento de reflexão e conexão com um ambiente natural em que se possa apreciar a beleza do mundo e cultivar um relacionamento harmonioso com ele. Exemplos: banho de floresta, dia da gratidão, música, artes manuais ou um culto de alguma religião, entre outras."}
+        ],
+        ou:{id:"e4b2ou", text:"Conquistar a especialidade Diálogo Inter-religioso."}
+      },
+      { id:"e4b3", name:"Bloco 3 — Hábitos Saudáveis",
+        desc:"Cuidar do próprio bem-estar adotando hábitos saudáveis, praticando atividades físicas, mantendo uma alimentação equilibrada e garantindo a higiene pessoal e a organização do ambiente onde vive.",
+        fixas:[
+          {id:"e4b3f1", text:"Planejar um cardápio de acampamento para a patrulha ou equipe de interesse, priorizando alimentação sustentável, com mínimo uso de produtos industrializados e redução de resíduos, e avaliar após a atividade se os objetivos foram atingidos."},
+          {id:"e4b3f2", text:"Praticar atividades físicas regularmente."}
+        ],
+        varLabel:"Realizar duas ações dentre as listadas a seguir",
+        variaveis:[
+          {id:"e4b3v1", text:"Manter o canto da patrulha limpo e organizado, colaborando também com a limpeza da sede."},
+          {id:"e4b3v2", text:"Planejar e realizar um almoço ou jantar equilibrado e saudável para a patrulha, elaborando o cardápio, organizando a lista de compras, preparando os alimentos e fazendo avaliação posterior."},
+          {id:"e4b3v3", text:"Praticar atividades como meditação, yoga ou técnicas de relaxamento na natureza."},
+          {id:"e4b3v4", text:"Elaborar um plano pessoal de hábitos saudáveis e avaliar seu cumprimento ao longo do ciclo."},
+          {id:"e4b3v5", text:"Demonstrar manter a rotina de cuidado com seu ambiente doméstico, com autonomia e cooperação nas responsabilidades da casa."}
+        ],
+        ou:{id:"e4b3ou", text:"Conquistar ao menos uma das seguintes especialidades: Esportes, Educação Alimentar e Nutricional."}
+      },
+      { id:"e4b4", name:"Bloco 4 — Saúde Mental",
+        desc:"Cultivar hábitos que promovem a saúde mental, aprender a lidar com desafios e aplicar práticas que favorecem um ambiente positivo e acolhedor para si e para aqueles ao seu redor.",
+        fixas:[
+          {id:"e4b4f1", text:"Buscar informações e conhecimentos sobre os Espaços Seguros no Movimento Escoteiro e promover seus conceitos em todas as atividades."},
+          {id:"e4b4f2", text:"Reconhecer sinais de estresse, ansiedade ou tristeza em colegas e praticar técnicas básicas de primeiros socorros em saúde mental, como escuta ativa, apoio inicial e encaminhamento para ajuda adequada."}
+        ],
+        varLabel:"Realizar três ações dentre as listadas a seguir",
+        variaveis:[
+          {id:"e4b4v1", text:"Realizar, com sua patrulha ou equipe de interesse, uma campanha relacionada à temática de saúde mental, como Setembro Amarelo ou Janeiro Branco."},
+          {id:"e4b4v2", text:"Desenvolver hábitos e atividades para aliviar a tensão do dia a dia, proporcionando momentos de bem-estar e equilíbrio."},
+          {id:"e4b4v3", text:"Convidar profissionais da área de saúde e saúde mental para falar sobre o assunto na tropa."},
+          {id:"e4b4v4", text:"Organizar sua rotina de atividades mensais, considerando a importância do equilíbrio entre as atividades do mundo digital e real e incluindo uma atividade de bem-estar offline."},
+          {id:"e4b4v5", text:"Utilizar técnicas ou espaços para autoexpressão e contato com suas emoções e pensamentos, como: Mindfulness (foco no presente), meditação guiada, terapia, teatro ou dança de expressão corporal."}
+        ],
+        ou:{id:"e4b4ou", text:"Conquistar ao menos uma das seguintes especialidades: Saúde Mental e Bem-estar Emocional, Hobbies e Lazer."}
+      },
+      { id:"e4b5", name:"Bloco 5 — Vínculos Saudáveis",
+        desc:"Construir relações saudáveis e empáticas, criando laços baseados no respeito, na compreensão mútua e no bem-estar coletivo.",
+        fixas:[
+          {id:"e4b5f1", text:"Identificar e discutir com sua patrulha ou equipe de interesse as manifestações de bullying e cyberbullying ao seu redor, elaborando e implementando estratégias para prevenir e combater essas situações."}
+        ],
+        varLabel:"Realizar três ações dentre as listadas a seguir",
+        variaveis:[
+          {id:"e4b5v1", text:"Promover um encontro social que reúna jovens de diferentes realidades e contextos, criando um ambiente de convivência, troca de experiências e respeito à diversidade."},
+          {id:"e4b5v2", text:"Realizar uma roda de conversa para debater temas como confiança, respeito e equilíbrio nas relações, incentivando a reflexão sobre atitudes que contribuem para vínculos saudáveis."},
+          {id:"e4b5v3", text:"Engajar-se em uma equipe de interesse para planejar e executar projetos ou conquistar especialidades, fortalecendo a colaboração, o compromisso e a construção de vínculos positivos no grupo."},
+          {id:"e4b5v4", text:"Promover reuniões regulares na patrulha que incluam espaços de escuta e apoio, incentivando a empatia, o compartilhamento de desafios e a busca conjunta por soluções."},
+          {id:"e4b5v5", text:"Assumir responsabilidades no ambiente familiar, contribuindo de forma constante com tarefas do dia a dia e promovendo diálogo respeitoso sobre decisões coletivas."},
+          {id:"e4b5v6", text:"Convidar um colega da mesma faixa etária para participar de um Fogo de Conselho, integrado a sua patrulha e com o devido \"Registro de Visitante\"."}
+        ],
+        ou:{id:"e4b5ou", text:"Conquistar a especialidade Saúde Sexual e Reprodutiva."}
+      }
+    ]
+  },
+  {
+    id:"patria", eixo:true, num:"🏆", name:"Escoteiro da Pátria",
+    flat:true, isPatria: true,
+    blocos: [{ id:"patria-b", items: [
+      { id:"patria-azimute", text:"Realizar o Desafio do Azimute: jornada de 15km com 2 pernoites ao ar livre." },
+      { id:"patria-avaliacao", text:"Passar pela avaliação dos pares e autoavaliação." }
+    ]}]
+  }
+];
+
+const SPECIALTIES = [
+  { id:"area1", name:"Habilidades para a Vida", especialidades:[
+      {id:"sp-gastronomia", text:"Gastronomia"},
+      {id:"sp-tecnologia", text:"Tecnologia"},
+      {id:"sp-educacao", text:"Educação"},
+      {id:"sp-idiomas", text:"Idiomas"},
+      {id:"sp-empreendedorismo", text:"Empreendedorismo e Negócios"},
+      {id:"sp-financas", text:"Finanças e Economia"},
+      {id:"sp-lideranca", text:"Liderança e Gestão"},
+      {id:"sp-viagens", text:"Viagens"},
+      {id:"sp-comunicacoes", text:"Comunicações"}
+    ], insignias:[
+      {id:"in-aprender", text:"Insígnia do Aprender"},
+      {id:"in-mar", text:"Insígnia da Modalidade do Mar (Naval)"},
+      {id:"in-ar", text:"Insígnia da Modalidade do Ar (Aeronauta)"},
+      {id:"in-inovadores", text:"Insígnia Inovadores de Impacto"}
+    ]
+  },
+  { id:"area2", name:"Meio Ambiente", especialidades:[
+      {id:"sp-agricultura", text:"Agricultura Sustentável"},
+      {id:"sp-sustentabilidade", text:"Sustentabilidade"},
+      {id:"sp-natureza", text:"Natureza e Ciências Naturais"},
+      {id:"sp-edambiental", text:"Educação Ambiental"},
+      {id:"sp-esportesaventura", text:"Esportes de Aventura"},
+      {id:"sp-ecoturismo", text:"Ecoturismo"},
+      {id:"sp-habilidadesesc", text:"Habilidades Escoteiras"}
+    ], insignias:[
+      {id:"in-3r", text:"Insígnia Reduzir, Reciclar, Reutilizar"},
+      {id:"in-solar", text:"Insígnia Escoteiros pela Energia Solar"},
+      {id:"in-campeoes", text:"Insígnia Campeões da Natureza"}
+    ]
+  },
+  { id:"area3", name:"Paz e Desenvolvimento", especialidades:[
+      {id:"sp-devcomunitario", text:"Desenvolvimento Comunitário"},
+      {id:"sp-acoeshumanit", text:"Ações Humanitárias"},
+      {id:"sp-inclusao", text:"Inclusão e Acessibilidade"},
+      {id:"sp-equidade", text:"Equidade"},
+      {id:"sp-politicas", text:"Políticas Públicas"},
+      {id:"sp-culturarte", text:"Cultura e Arte"},
+      {id:"sp-cienciashumanas", text:"Ciências Humanas"},
+      {id:"sp-direitoshumanos", text:"Direitos Humanos"},
+      {id:"sp-diversidades", text:"Diversidades"},
+      {id:"sp-fecrencas", text:"Fé, Crenças e Diálogo Inter-religioso"}
+    ], insignias:[
+      {id:"in-desafiocom", text:"Insígnia do Desafio Comunitário"},
+      {id:"in-mensageiros", text:"Insígnia Mensageiros da Paz"},
+      {id:"in-mundo", text:"Reconhecimento Escoteiros do Mundo"},
+      {id:"in-lusofonia", text:"Insígnia da Lusofonia"},
+      {id:"in-conesul", text:"Insígnia do Cone Sul"},
+      {id:"in-dialogospaz", text:"Diálogos pela Paz"}
+    ]
+  },
+  { id:"area4", name:"Saúde e Bem-estar", especialidades:[
+      {id:"sp-saude", text:"Saúde"},
+      {id:"sp-dialogointer", text:"Diálogo Inter-religioso"},
+      {id:"sp-esportes", text:"Esportes"},
+      {id:"sp-edalimentar", text:"Educação Alimentar e Nutricional"},
+      {id:"sp-saudemental", text:"Saúde Mental e Bem-Estar Emocional"},
+      {id:"sp-hobbies", text:"Hobbies e Lazer"},
+      {id:"sp-saudesexual", text:"Saúde Sexual e Reprodutiva"}
+    ], insignias:[]
+  }
+];
+
+const SPEC_STORAGE_KEY = "especialidades-senior-v1";
+let specProgress = {};
+let specUseLocalFallback = false;
+
+const STORAGE_KEY = "progressao-senior-v1";
+let progress = {}; // { itemId: { checked: bool, date: "YYYY-MM-DD" } }
+let openEixos = new Set([DATA[0].id]); // controla quais seções ficam abertas entre re-renderizações
+let searchQueryProgressao = '';
+let searchQueryEspecialidades = '';
+
+function normalizeText(s){
+  return (s||'').toString().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+}
+
+function highlightText(text, q){
+  if(!q) return text;
+  const norm = normalizeText(text);
+  const idx = norm.indexOf(q);
+  if(idx === -1) return text;
+  return text.slice(0,idx) + '<mark class="search-mark">' + text.slice(idx, idx+q.length) + '</mark>' + text.slice(idx+q.length);
+}
+
+function parseVarRequired(label){
+  if(!label) return null;
+  const l = label.toLowerCase();
+  const map = [["duas",2],["dois",2],["três",3],["tres",3],["quatro",4],["cinco",5],["seis",6]];
+  for(const [word,n] of map){ if(l.includes(word)) return n; }
+  return null;
+}
+
+function blocoComplete(b){
+  const fixasArr = b.fixas||[];
+  const fixasDone = fixasArr.every(i=> progress[i.id] && progress[i.id].checked);
+  if(!fixasDone) return false;
+  if(b.ou && progress[b.ou.id] && progress[b.ou.id].checked) return true;
+  const req = parseVarRequired(b.varLabel);
+  const varArr = b.variaveis||[];
+  const varDone = varArr.filter(i=> progress[i.id] && progress[i.id].checked).length;
+  if(req!=null) return varDone>=req;
+  return fixasArr.length>0; // bloco só com ações fixas
+}
+
+function countBlocksCompleted(){
+  let done=0, total=0;
+  DATA.forEach(ex=>{
+    if(ex.flat) return; // Período de Acolhida e Escoteiro da Pátria não contam como blocos
+    ex.blocos.forEach(b=>{ total++; if(blocoComplete(b)) done++; });
+  });
+  return {done, total};
+}
+
+function currentStage(blocksDone){
+  const azimuteDone = progress['patria-azimute'] && progress['patria-azimute'].checked;
+  const avaliacaoDone = progress['patria-avaliacao'] && progress['patria-avaliacao'].checked;
+  if(blocksDone>=18 && azimuteDone && avaliacaoDone) return {icon:"🏆", label:"Escoteiro da Pátria"};
+  if(blocksDone>=12) return {icon:"🧭", label:"Azimute"};
+  if(blocksDone>=6) return {icon:"🥉", label:"Conquista"};
+  return {icon:"🧗", label:"Escalada"};
+}
+
+function allItemIds(){
+  const ids = [];
+  DATA.forEach(ex => ex.blocos.forEach(b => {
+    (b.items||[]).forEach(i => ids.push(i.id));
+    (b.fixas||[]).forEach(i => ids.push(i.id));
+    (b.variaveis||[]).forEach(i => ids.push(i.id));
+    if (b.ou) ids.push(b.ou.id);
+  }));
+  return ids;
+}
+
+function itemRow(item, isOu){
+  const p = progress[item.id] || {};
+  const checked = !!p.checked;
+  const date = p.date || "";
+  let modTag = "";
+  if(item.tag === "mar") modTag = '<span class="mod-tag mod-mar" title="Modalidade do Mar">⛵ MAR</span>';
+  if(item.tag === "ar") modTag = '<span class="mod-tag mod-ar" title="Modalidade do Ar">✈️ AR</span>';
+  return `
+    <div class="item ${checked?'checked':''} ${isOu?'ou-item':''}" data-id="${item.id}">
+      <div class="chk" data-action="toggle" data-id="${item.id}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#1C1113" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="item-body">
+        <div class="item-text" data-action="toggle" data-id="${item.id}">${isOu?'<span class="ou-tag">OU</span>':''}${modTag}${highlightText(item.text, searchQueryProgressao)}</div>
+        <div class="item-date">
+          <input type="date" value="${date}" data-action="date" data-id="${item.id}">
+        </div>
+      </div>
+    </div>`;
+}
+
+function blocoHtml(b){
+  let html = `<div class="bloco">`;
+  if(b.name){
+    html += `<div class="bloco-name">${b.name}</div>`;
+    if(b.desc) html += `<div class="bloco-desc">${b.desc}</div>`;
+  }
+  if(b.items){
+    html += b.items.map(i=>itemRow(i,false)).join('');
+  }
+  if(b.fixas){
+    html += `<div class="section-label">Ações fixas</div>`;
+    html += b.fixas.map(i=>itemRow(i,false)).join('');
+  }
+  if(b.variaveis){
+    html += `<div class="section-label">${b.varLabel||'Ações variáveis'}</div>`;
+    html += b.variaveis.map(i=>itemRow(i,false)).join('');
+  }
+  if(b.ou){
+    html += itemRow(b.ou, true);
+  }
+  html += `</div>`;
+  return html;
+}
+
+function blocoCounts(b){
+  let total=0, done=0;
+  const all = [...(b.items||[]), ...(b.fixas||[]), ...(b.variaveis||[])];
+  if(b.ou) all.push(b.ou);
+  all.forEach(i=>{ total++; if(progress[i.id] && progress[i.id].checked) done++; });
+  return {total, done};
+}
+
+function eixoCounts(ex){
+  let total=0, done=0;
+  ex.blocos.forEach(b=>{ const c = blocoCounts(b); total+=c.total; done+=c.done; });
+  return {total, done};
+}
+
+function render(){
+  const content = document.getElementById('content');
+  content.classList.remove('loading');
+  content.innerHTML = DATA.map(ex=>{
+    const c = eixoCounts(ex);
+    const pct = c.total? Math.round(c.done/c.total*100):0;
+    const bodyInner = ex.flat
+      ? `<div class="plain-list">${ex.blocos.map(b=>b.items.map(i=>itemRow(i,false)).join('')).join('')}</div>`
+      : ex.blocos.map(blocoHtml).join('');
+    return `
+      <div class="eixo ${openEixos.has(ex.id)?'open':''}" data-eixo="${ex.id}">
+        <div class="eixo-head" data-action="collapse" data-id="${ex.id}">
+          <div class="eixo-title">
+            ${ex.num?`<span class="eixo-num">${ex.num}</span>`:''}
+            <span class="eixo-name">${ex.name}</span>
+          </div>
+          <div class="eixo-meta">
+            <span class="eixo-frac">${c.done}/${c.total}</span>
+            <span class="chevron"></span>
+          </div>
+        </div>
+        <div class="eixo-bar-track"><div class="eixo-bar-fill" style="width:${pct}%"></div></div>
+        <div class="eixo-body"><div class="eixo-body-inner">${bodyInner}</div></div>
+      </div>`;
+  }).join('');
+  attachHandlers();
+  updateHeader();
+  applyProgressSearch();
+}
+
+function applyProgressSearch(){
+  const content = document.getElementById('content');
+  const countEl = document.getElementById('searchCountProgressao');
+  if(!content) return;
+  const q = searchQueryProgressao;
+  let shown = 0;
+  content.querySelectorAll('.item').forEach(el=>{
+    const textEl = el.querySelector('.item-text');
+    const txt = normalizeText(textEl ? textEl.textContent : '');
+    const match = !q || txt.includes(q);
+    el.classList.toggle('search-hide', !match);
+    if(match) shown++;
+  });
+  content.querySelectorAll('.bloco').forEach(b=>{
+    const anyVisible = !!b.querySelector('.item:not(.search-hide)');
+    b.classList.toggle('search-hide', !!q && !anyVisible);
+  });
+  content.querySelectorAll('.eixo').forEach(ex=>{
+    const anyVisible = !!ex.querySelector('.item:not(.search-hide)');
+    if(q){
+      ex.classList.toggle('search-hide', !anyVisible);
+      if(anyVisible) ex.classList.add('open');
+    } else {
+      ex.classList.remove('search-hide');
+      ex.classList.toggle('open', openEixos.has(ex.getAttribute('data-eixo')));
+    }
+  });
+  if(countEl) countEl.textContent = q ? (shown + ' encontrado' + (shown!==1?'s':'')) : '';
+}
+
+function updateHeader(){
+  if(document.getElementById('viewEvolucao') && document.getElementById('viewEvolucao').style.display !== 'none') renderEvolucao();
+  const ids = allItemIds();
+  const total = ids.length;
+  const done = ids.filter(id => progress[id] && progress[id].checked).length;
+  const pct = total? Math.round(done/total*100):0;
+  document.getElementById('pctLabel').textContent = pct + '%';
+  document.getElementById('fracLabel').textContent = done + ' / ' + total;
+  const circumference = 194.8;
+  const offset = circumference - (pct/100)*circumference;
+  document.getElementById('ringFill').style.strokeDashoffset = offset;
+
+  const { done: blocksDone, total: blocksTotal } = countBlocksCompleted();
+  const stage = currentStage(blocksDone);
+  const stages = [
+    {icon:"🧗", label:"Escalada"},
+    {icon:"🥉", label:"Conquista"},
+    {icon:"🧭", label:"Azimute"},
+    {icon:"🏆", label:"Pátria"}
+  ];
+  const stageRow = document.getElementById('stageRow');
+  stageRow.innerHTML = stages.map((s,i)=>{
+    const active = s.label === (stage.label==="Escoteiro da Pátria"?"Pátria":stage.label);
+    return `<span class="stage-pill ${active?'active':''}">${s.icon} ${s.label}</span>${i<stages.length-1?'<span class="stage-sep">›</span>':''}`;
+  }).join('') + `<div class="stage-note">${blocksDone} de ${blocksTotal} blocos concluídos (fixas + variáveis/OU de cada bloco)</div>`;
+}
+
+function attachHandlers(){
+  document.querySelectorAll('[data-action="toggle"]').forEach(el=>{
+    el.addEventListener('click', (e)=>{
+      const id = el.getAttribute('data-id');
+      toggleItem(id);
+    });
+  });
+  document.querySelectorAll('[data-action="date"]').forEach(el=>{
+    el.addEventListener('change', (e)=>{
+      const id = el.getAttribute('data-id');
+      setDate(id, el.value);
+    });
+  });
+  document.querySelectorAll('[data-action="collapse"]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const parent = el.closest('.eixo');
+      const id = parent.getAttribute('data-eixo');
+      if(openEixos.has(id)){ openEixos.delete(id); } else { openEixos.add(id); }
+      parent.classList.toggle('open');
+    });
+  });
+}
+
+function toggleItem(id){
+  const cur = progress[id] || {};
+  cur.checked = !cur.checked;
+  if(cur.checked && !cur.date){
+    cur.date = new Date().toISOString().slice(0,10);
+  }
+  progress[id] = cur;
+  save();
+  if(currentUser) upsertCloud('progressao', id, !!cur.checked, cur.date);
+  render();
+}
+
+function setDate(id, value){
+  const cur = progress[id] || {};
+  cur.date = value;
+  progress[id] = cur;
+  save();
+  if(currentUser) upsertCloud('progressao', id, !!cur.checked, cur.date);
+}
+
+let useLocalFallback = false;
+
+async function save(){
+  const json = JSON.stringify(progress);
+  if(!useLocalFallback && window.storage){
+    try{
+      await window.storage.set(STORAGE_KEY, json, false);
+      return;
+    }catch(err){
+      useLocalFallback = true;
+    }
+  }
+  try{ localStorage.setItem(STORAGE_KEY, json); }catch(err){ console.error('Erro ao salvar progresso', err); }
+}
+
+async function load(){
+  if(window.storage){
+    try{
+      const res = await window.storage.get(STORAGE_KEY, false);
+      if(res && res.value){ progress = JSON.parse(res.value); render(); return; }
+    }catch(err){
+      useLocalFallback = true;
+    }
+  }
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw) progress = JSON.parse(raw);
+  }catch(err){ /* sem dados salvos ainda */ }
+  render();
+}
+
+document.getElementById('resetBtn').addEventListener('click', async ()=>{
+  if(!confirm('Isso vai apagar todo o seu progresso salvo. Tem certeza?')) return;
+  progress = {};
+  await save();
+  render();
+});
+
+// ---------- Especialidades ----------
+
+const SPEC_GUIDE_URL = "https://loja.escoteiros.org.br/ebook/Mjg4MDU3/ODc3OQ==";
+
+function specItemRow(item){
+  const p = specProgress[item.id] || {};
+  const checked = !!p.checked;
+  const date = p.date || "";
+  return `
+    <div class="item ${checked?'checked':''}" data-id="${item.id}">
+      <div class="chk" data-action="spec-toggle" data-id="${item.id}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#1C1113" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="item-body">
+        <div class="item-text-row">
+          <div class="item-text" data-action="spec-toggle" data-id="${item.id}">${highlightText(item.text, searchQueryEspecialidades)}</div>
+          <a class="spec-link" href="${SPEC_GUIDE_URL}" target="_blank" rel="noopener">Ver requisitos ↗</a>
+        </div>
+        <div class="item-date">
+          <input type="date" value="${date}" data-action="spec-date" data-id="${item.id}">
+        </div>
+      </div>
+    </div>`;
+}
+
+function allSpecIds(){
+  const ids = [];
+  SPECIALTIES.forEach(area=>{
+    area.especialidades.forEach(i=>ids.push(i.id));
+    area.insignias.forEach(i=>ids.push(i.id));
+  });
+  return ids;
+}
+
+function renderSpecialidades(){
+  const content = document.getElementById('specContent');
+  content.classList.remove('loading');
+  content.innerHTML = SPECIALTIES.map(area=>{
+    let html = `<div class="spec-area"><div class="spec-area-title">${area.name}</div>`;
+    if(area.especialidades.length){
+      html += `<div class="spec-sub-label">Especialidades</div>`;
+      html += area.especialidades.map(specItemRow).join('');
+    }
+    if(area.insignias.length){
+      html += `<div class="spec-sub-label">Insígnias</div>`;
+      html += area.insignias.map(specItemRow).join('');
+    }
+    html += `</div>`;
+    return html;
+  }).join('');
+
+  const ids = allSpecIds();
+  const total = ids.length;
+  const done = ids.filter(id=>specProgress[id] && specProgress[id].checked).length;
+  document.getElementById('specFracLabel').textContent = done + ' / ' + total;
+
+  document.querySelectorAll('[data-action="spec-toggle"]').forEach(el=>{
+    el.addEventListener('click', ()=> specToggle(el.getAttribute('data-id')));
+  });
+  document.querySelectorAll('[data-action="spec-date"]').forEach(el=>{
+    el.addEventListener('change', ()=> specSetDate(el.getAttribute('data-id'), el.value));
+  });
+  applySpecSearch();
+}
+
+function applySpecSearch(){
+  const content = document.getElementById('specContent');
+  const countEl = document.getElementById('searchCountEspecialidades');
+  if(!content) return;
+  const q = searchQueryEspecialidades;
+  let shown = 0;
+  content.querySelectorAll('.item').forEach(el=>{
+    const textEl = el.querySelector('.item-text');
+    const txt = normalizeText(textEl ? textEl.textContent : '');
+    const match = !q || txt.includes(q);
+    el.classList.toggle('search-hide', !match);
+    if(match) shown++;
+  });
+  content.querySelectorAll('.spec-area').forEach(a=>{
+    const anyVisible = !!a.querySelector('.item:not(.search-hide)');
+    a.classList.toggle('search-hide', !!q && !anyVisible);
+  });
+  if(countEl) countEl.textContent = q ? (shown + ' encontrada' + (shown!==1?'s':'')) : '';
+}
+
+function specToggle(id){
+  const cur = specProgress[id] || {};
+  cur.checked = !cur.checked;
+  if(cur.checked && !cur.date){
+    cur.date = new Date().toISOString().slice(0,10);
+  }
+  specProgress[id] = cur;
+  specSave();
+  if(currentUser) upsertCloud('especialidade', id, !!cur.checked, cur.date);
+  renderSpecialidades();
+}
+
+function specSetDate(id, value){
+  const cur = specProgress[id] || {};
+  cur.date = value;
+  specProgress[id] = cur;
+  specSave();
+  if(currentUser) upsertCloud('especialidade', id, !!cur.checked, cur.date);
+}
+
+async function specSave(){
+  const json = JSON.stringify(specProgress);
+  if(!specUseLocalFallback && window.storage){
+    try{
+      await window.storage.set(SPEC_STORAGE_KEY, json, false);
+      return;
+    }catch(err){
+      specUseLocalFallback = true;
+    }
+  }
+  try{ localStorage.setItem(SPEC_STORAGE_KEY, json); }catch(err){ console.error('Erro ao salvar especialidades', err); }
+}
+
+async function specLoad(){
+  if(window.storage){
+    try{
+      const res = await window.storage.get(SPEC_STORAGE_KEY, false);
+      if(res && res.value){ specProgress = JSON.parse(res.value); renderSpecialidades(); return; }
+    }catch(err){
+      specUseLocalFallback = true;
+    }
+  }
+  try{
+    const raw = localStorage.getItem(SPEC_STORAGE_KEY);
+    if(raw) specProgress = JSON.parse(raw);
+  }catch(err){ /* sem dados salvos ainda */ }
+  renderSpecialidades();
+}
+
+document.getElementById('specResetBtn').addEventListener('click', async ()=>{
+  if(!confirm('Isso vai apagar todas as especialidades marcadas. Tem certeza?')) return;
+  specProgress = {};
+  await specSave();
+  renderSpecialidades();
+});
+
+// ---------- Abas ----------
+function showTab(name){
+  const map = {
+    progressao:['tabProgressaoBtn','viewProgressao'],
+    especialidades:['tabEspecialidadesBtn','viewEspecialidades'],
+    evolucao:['tabEvolucaoBtn','viewEvolucao']
+  };
+  Object.keys(map).forEach(k=>{
+    const [btn, view] = map[k];
+    document.getElementById(btn).classList.toggle('active', k===name);
+    document.getElementById(view).style.display = (k===name) ? '' : 'none';
+  });
+  if(name==='evolucao') renderEvolucao();
+}
+document.getElementById('tabProgressaoBtn').addEventListener('click', ()=>showTab('progressao'));
+document.getElementById('tabEspecialidadesBtn').addEventListener('click', ()=>showTab('especialidades'));
+document.getElementById('tabEvolucaoBtn').addEventListener('click', ()=>showTab('evolucao'));
+
+document.getElementById('searchProgressao').addEventListener('input', (e)=>{
+  searchQueryProgressao = normalizeText(e.target.value.trim());
+  render();
+});
+document.getElementById('searchEspecialidades').addEventListener('input', (e)=>{
+  searchQueryEspecialidades = normalizeText(e.target.value.trim());
+  renderSpecialidades();
+});
+
+// ---------- Evolução (gráfico) ----------
+const MESES = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+
+function itemTextMap(){
+  const m = {};
+  DATA.forEach(ex=>ex.blocos.forEach(b=>{
+    [...(b.items||[]), ...(b.fixas||[]), ...(b.variaveis||[])].forEach(i=>m[i.id]=i.text);
+    if(b.ou) m[b.ou.id] = b.ou.text;
+  }));
+  SPECIALTIES.forEach(a=>[...a.especialidades, ...a.insignias].forEach(i=>m[i.id]=i.text));
+  return m;
+}
+
+function collectDone(){
+  const out = [];
+  Object.entries(progress).forEach(([id,p])=>{ if(p && p.checked && p.date) out.push({id, date:p.date, kind:'Progressão'}); });
+  Object.entries(specProgress).forEach(([id,p])=>{ if(p && p.checked && p.date) out.push({id, date:p.date, kind:'Especialidade'}); });
+  return out;
+}
+
+function fmtDate(d){ const [y,m,dd] = d.split('-'); return dd+'/'+m+'/'+y; }
+
+function renderEvolucao(){
+  const el = document.getElementById('evoContent');
+  if(!el) return;
+  const done = collectDone();
+  if(!done.length){
+    el.innerHTML = '<div class="evo-empty">Marque itens com data para ver sua evolução aqui.</div>';
+    return;
+  }
+  const byMonth = {};
+  done.forEach(d=>{ const k = d.date.slice(0,7); byMonth[k] = (byMonth[k]||0)+1; });
+  const keys = Object.keys(byMonth).sort();
+  const curKey = new Date().toISOString().slice(0,7);
+  const endKey = keys[keys.length-1] > curKey ? keys[keys.length-1] : curKey;
+  let [y,m] = keys[0].split('-').map(Number);
+  const months = [];
+  while(true){
+    const k = y+'-'+String(m).padStart(2,'0');
+    months.push(k);
+    if(k===endKey || months.length>600) break;
+    m++; if(m>12){ m=1; y++; }
+  }
+  let cum = 0;
+  const series = months.map(k=>{ cum += byMonth[k]||0; return {k, n:byMonth[k]||0, cum}; });
+  const win = series.slice(-12);
+  const maxN = Math.max(1, ...win.map(s=>s.n));
+  const maxCum = Math.max(1, win[win.length-1].cum);
+
+  const W=340, H=200, padL=8, padR=8, padT=22, padB=30;
+  const plotW = W-padL-padR, plotH = H-padT-padB;
+  const step = plotW/win.length, barW = step*0.55;
+
+  let bars='', labels='', vals='', pts=[];
+  win.forEach((s,i)=>{
+    const x = padL + i*step + (step-barW)/2;
+    const h = (s.n/maxN)*plotH;
+    const yb = padT + plotH - h;
+    bars += '<rect x="'+x.toFixed(1)+'" y="'+yb.toFixed(1)+'" width="'+barW.toFixed(1)+'" height="'+h.toFixed(1)+'" rx="3" fill="var(--gold)" opacity="0.85"/>';
+    if(s.n>0) vals += '<text x="'+(x+barW/2).toFixed(1)+'" y="'+(yb-4).toFixed(1)+'" font-size="9" text-anchor="middle" fill="var(--text)">'+s.n+'</text>';
+    const [yy,mm] = s.k.split('-').map(Number);
+    const showYear = (i===0 || mm===1);
+    labels += '<text x="'+(x+barW/2).toFixed(1)+'" y="'+(H-14)+'" font-size="9" text-anchor="middle" fill="var(--muted)">'+MESES[mm-1]+'</text>';
+    if(showYear) labels += '<text x="'+(x+barW/2).toFixed(1)+'" y="'+(H-3)+'" font-size="8" text-anchor="middle" fill="var(--muted)">'+String(yy).slice(2)+'</text>';
+    const cy = padT + plotH - (s.cum/maxCum)*plotH;
+    pts.push((x+barW/2).toFixed(1)+','+cy.toFixed(1));
+  });
+  const line = '<polyline points="'+pts.join(' ')+'" fill="none" stroke="var(--moss)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>' +
+    pts.map(p=>{ const [px,py]=p.split(','); return '<circle cx="'+px+'" cy="'+py+'" r="2.5" fill="var(--moss)"/>'; }).join('');
+  const base = '<line x1="'+padL+'" y1="'+(padT+plotH)+'" x2="'+(W-padR)+'" y2="'+(padT+plotH)+'" stroke="var(--line)" stroke-width="1"/>';
+
+  const best = Object.entries(byMonth).sort((a,b)=>b[1]-a[1])[0];
+  const [by,bm] = best[0].split('-').map(Number);
+  const lastDate = done.map(d=>d.date).sort().pop();
+  const texts = itemTextMap();
+  const recent = done.slice().sort((a,b)=> b.date.localeCompare(a.date)).slice(0,8).map(d=>
+    '<div class="evo-recent"><span class="d">'+fmtDate(d.date)+'</span><span class="t" title="'+(texts[d.id]||'').replace(/"/g,'&quot;')+'">'+(texts[d.id]||d.id)+'</span></div>'
+  ).join('');
+
+  el.innerHTML =
+    '<div class="evo-stats">' +
+      '<div class="evo-stat"><div class="n">'+done.length+'</div><div class="l">itens com data registrada</div></div>' +
+      '<div class="evo-stat"><div class="n">'+(byMonth[curKey]||0)+'</div><div class="l">marcados neste mês</div></div>' +
+      '<div class="evo-stat"><div class="n">'+best[1]+'</div><div class="l">melhor mês ('+MESES[bm-1]+'/'+String(by).slice(2)+')</div></div>' +
+      '<div class="evo-stat"><div class="n" style="font-size:20px;padding-top:5px">'+fmtDate(lastDate)+'</div><div class="l">última atividade</div></div>' +
+    '</div>' +
+    '<div class="evo-card">' +
+      '<div class="evo-card-title">Itens por mês</div>' +
+      '<div class="evo-legend"><span><i style="background:var(--gold)"></i>no mês</span><span><i style="background:var(--moss)"></i>acumulado</span></div>' +
+      '<svg viewBox="0 0 '+W+' '+H+'" width="100%" role="img" aria-label="Gráfico de itens concluídos por mês">'+base+bars+line+vals+labels+'</svg>' +
+    '</div>' +
+    '<div class="evo-card"><div class="evo-card-title">Últimas conquistas</div>'+recent+'</div>';
+}
+
+// ---------- Exportar PDF ----------
+document.getElementById('exportPdfBtn').addEventListener('click', exportPDF);
+
+function exportPDF(){
+  const jsPDFLib = window.jspdf && window.jspdf.jsPDF;
+  if(!jsPDFLib){ alert('Não consegui carregar o gerador de PDF. Verifique sua internet e tente de novo.'); return; }
+  const doc = new jsPDFLib({ unit:'pt', format:'a4' });
+  const pageW = doc.internal.pageSize.getWidth();
+  const marginX = 40;
+  let y = 50;
+
+  function ensureSpace(h){
+    if(y + h > 790){ doc.addPage(); y = 50; }
+  }
+  function heading(text, size){
+    ensureSpace(size+14);
+    doc.setFont('helvetica','bold'); doc.setFontSize(size); doc.setTextColor(120,30,45);
+    doc.text(text, marginX, y);
+    y += size + 8;
+  }
+  function subtext(text){
+    ensureSpace(14);
+    doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(90,90,90);
+    doc.text(text, marginX, y);
+    y += 16;
+  }
+  function bulletLine(text, date){
+    const maxW = pageW - marginX*2 - 70;
+    const lines = doc.splitTextToSize(text, maxW);
+    ensureSpace(lines.length*13 + 4);
+    doc.setFont('helvetica','normal'); doc.setFontSize(9.5); doc.setTextColor(30,30,30);
+    doc.text('✓', marginX, y);
+    doc.text(lines, marginX+14, y);
+    if(date){
+      doc.setTextColor(140,140,140); doc.setFontSize(8.5);
+      doc.text(date, pageW-marginX-45, y);
+    }
+    y += lines.length*13 + 4;
+  }
+  function sectionRule(){
+    ensureSpace(10);
+    doc.setDrawColor(210,210,210); doc.line(marginX, y, pageW-marginX, y);
+    y += 14;
+  }
+
+  // Cabeçalho
+  doc.setFont('helvetica','bold'); doc.setFontSize(20); doc.setTextColor(120,30,45);
+  doc.text('Progressão — Ramo Sênior', marginX, y); y += 22;
+  doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(110,110,110);
+  const hoje = new Date().toLocaleDateString('pt-BR');
+  doc.text('Resumo gerado em ' + hoje, marginX, y); y += 10;
+  sectionRule();
+
+  const { done: blocksDone, total: blocksTotal } = countBlocksCompleted();
+  const stage = currentStage(blocksDone);
+  const ids = allItemIds();
+  const itemsDone = ids.filter(id=>progress[id] && progress[id].checked).length;
+  const specIds = allSpecIds();
+  const specDone = specIds.filter(id=>specProgress[id] && specProgress[id].checked).length;
+
+  heading('Estágio atual: ' + stage.icon + ' ' + stage.label, 13);
+  subtext(blocksDone + ' de ' + blocksTotal + ' blocos concluídos  ·  ' + itemsDone + '/' + ids.length + ' itens de progressão  ·  ' + specDone + '/' + specIds.length + ' especialidades/insígnias');
+  y += 6;
+
+  // Progressão por eixo
+  heading('Progressão pessoal', 15);
+  DATA.forEach(ex=>{
+    const c = eixoCounts(ex);
+    if(ex.flat){
+      const done = (ex.blocos[0].items||[]).filter(i=>progress[i.id]&&progress[i.id].checked);
+      if(!done.length) return;
+      heading(ex.name + '  (' + done.length + '/' + ex.blocos[0].items.length + ')', 12);
+      done.forEach(i=> bulletLine(i.text, progress[i.id].date ? fmtDate(progress[i.id].date) : ''));
+      y += 4;
+      return;
+    }
+    const anyDone = c.done > 0;
+    if(!anyDone) return;
+    heading((ex.num?ex.num+' — ':'') + ex.name + '  (' + c.done + '/' + c.total + ')', 12);
+    ex.blocos.forEach(b=>{
+      const all = [...(b.items||[]), ...(b.fixas||[]), ...(b.variaveis||[])];
+      if(b.ou) all.push(b.ou);
+      const done = all.filter(i=>progress[i.id] && progress[i.id].checked);
+      if(!done.length) return;
+      ensureSpace(16);
+      doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(60,60,60);
+      doc.text(b.name || 'Bloco', marginX, y); y += 14;
+      done.forEach(i=> bulletLine(i.text, progress[i.id].date ? fmtDate(progress[i.id].date) : ''));
+    });
+    y += 4;
+  });
+
+  // Especialidades
+  sectionRule();
+  heading('Especialidades e Insígnias conquistadas', 15);
+  let anySpec = false;
+  SPECIALTIES.forEach(area=>{
+    const all = [...area.especialidades, ...area.insignias];
+    const done = all.filter(i=>specProgress[i.id] && specProgress[i.id].checked);
+    if(!done.length) return;
+    anySpec = true;
+    heading(area.name, 12);
+    done.forEach(i=> bulletLine(i.text, specProgress[i.id].date ? fmtDate(specProgress[i.id].date) : ''));
+    y += 4;
+  });
+  if(!anySpec) subtext('Nenhuma especialidade marcada ainda.');
+
+  doc.save('progressao-senior-resumo.pdf');
+}
+
+// ---------- Conta / Supabase ----------
+const SUPABASE_URL = "https://kinflfbkajhthfpfkkfs.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpbmZsZmJrYWpodGhmcGZra2ZzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM1MTc0OTQsImV4cCI6MjA3OTA5MzQ5NH0.CnFOQ-ChbgFsDi4wDjptika-DRoTTNcVRtlFGcNP8zM";
+const sb = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+let currentUser = null;
+
+function openAuthModal(){ document.getElementById('authModal').style.display='flex'; }
+function closeAuthModal(){
+  document.getElementById('authModal').style.display='none';
+  document.getElementById('authError').textContent='';
+  document.getElementById('authEmail').value='';
+  document.getElementById('authPassword').value='';
+}
+
+function updateAccountUI(){
+  const btn = document.getElementById('accountBtn');
+  if(currentUser){
+    btn.textContent = 'Sair (' + currentUser.email + ')';
+  } else {
+    btn.textContent = 'Entrar';
+  }
+}
+
+document.getElementById('accountBtn').addEventListener('click', ()=>{
+  if(currentUser){
+    if(confirm('Sair da conta ' + currentUser.email + '? Seus dados continuam salvos na nuvem.')) signOutUser();
+  } else {
+    openAuthModal();
+  }
+});
+document.getElementById('authClose').addEventListener('click', closeAuthModal);
+
+async function signUpUser(){
+  if(!sb) return;
+  const email = document.getElementById('authEmail').value.trim();
+  const password = document.getElementById('authPassword').value;
+  const errEl = document.getElementById('authError');
+  if(!email || password.length < 6){ errEl.textContent = 'Preencha e-mail e senha (mín. 6 caracteres).'; return; }
+  errEl.textContent = 'Criando conta...';
+  const { data, error } = await sb.auth.signUp({ email, password });
+  if(error){ errEl.textContent = error.message; return; }
+  if(data.session){
+    currentUser = data.user;
+    updateAccountUI();
+    closeAuthModal();
+    await syncFromCloudAfterLogin();
+  } else {
+    errEl.textContent = 'Conta criada! Se pedir confirmação por e-mail, confirme e depois toque em Entrar.';
+  }
+}
+
+async function signInUser(){
+  if(!sb) return;
+  const email = document.getElementById('authEmail').value.trim();
+  const password = document.getElementById('authPassword').value;
+  const errEl = document.getElementById('authError');
+  if(!email || !password){ errEl.textContent = 'Preencha e-mail e senha.'; return; }
+  errEl.textContent = 'Entrando...';
+  const { data, error } = await sb.auth.signInWithPassword({ email, password });
+  if(error){ errEl.textContent = error.message; return; }
+  currentUser = data.user;
+  updateAccountUI();
+  closeAuthModal();
+  await syncFromCloudAfterLogin();
+}
+
+async function signOutUser(){
+  if(sb) await sb.auth.signOut();
+  currentUser = null;
+  updateAccountUI();
+}
+
+document.getElementById('authSignUp').addEventListener('click', signUpUser);
+document.getElementById('authSignIn').addEventListener('click', signInUser);
+
+async function fetchCloudRows(){
+  if(!sb || !currentUser) return [];
+  const { data, error } = await sb.from('senior_progress').select('*').eq('user_id', currentUser.id);
+  if(error){ console.error(error); return []; }
+  return data || [];
+}
+
+async function upsertCloud(kind, itemId, checked, date){
+  if(!sb || !currentUser) return;
+  try{
+    await sb.from('senior_progress').upsert({
+      user_id: currentUser.id,
+      kind: kind,
+      item_id: itemId,
+      checked: checked,
+      item_date: date || null,
+      updated_at: new Date().toISOString()
+    });
+  }catch(err){ console.error('Erro ao sincronizar com a nuvem', err); }
+}
+
+async function syncFromCloudAfterLogin(){
+  const rows = await fetchCloudRows();
+  const cloudProgress = {};
+  const cloudSpec = {};
+  rows.forEach(r=>{
+    const target = r.kind === 'progressao' ? cloudProgress : cloudSpec;
+    target[r.item_id] = { checked: !!r.checked, date: r.item_date || '' };
+  });
+
+  const localOnlyProg = Object.keys(progress).filter(id => !(id in cloudProgress));
+  const localOnlySpec = Object.keys(specProgress).filter(id => !(id in cloudSpec));
+
+  for(const id of localOnlyProg){
+    await upsertCloud('progressao', id, !!progress[id].checked, progress[id].date);
+    cloudProgress[id] = progress[id];
+  }
+  for(const id of localOnlySpec){
+    await upsertCloud('especialidade', id, !!specProgress[id].checked, specProgress[id].date);
+    cloudSpec[id] = specProgress[id];
+  }
+
+  progress = cloudProgress;
+  specProgress = cloudSpec;
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(progress)); }catch(e){}
+  try{ localStorage.setItem(SPEC_STORAGE_KEY, JSON.stringify(specProgress)); }catch(e){}
+
+  render();
+  renderSpecialidades();
+}
+
+document.getElementById('authForgot').addEventListener('click', async ()=>{
+  if(!sb) return;
+  const email = document.getElementById('authEmail').value.trim();
+  const errEl = document.getElementById('authError');
+  if(!email){ errEl.textContent = 'Digite seu e-mail acima e toque de novo.'; return; }
+  errEl.textContent = 'Enviando...';
+  const { error } = await sb.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin + window.location.pathname
+  });
+  errEl.textContent = error ? error.message : 'Pronto! Confira seu e-mail e toque no link para criar uma nova senha.';
+});
+
+if(sb){
+  sb.auth.onAuthStateChange((event)=>{
+    if(event === 'PASSWORD_RECOVERY'){
+      closeAuthModal();
+      document.getElementById('recoveryModal').style.display = 'flex';
+    }
+  });
+}
+
+document.getElementById('recoverySave').addEventListener('click', async ()=>{
+  if(!sb) return;
+  const pw = document.getElementById('recoveryPassword').value;
+  const errEl = document.getElementById('recoveryError');
+  if(pw.length < 6){ errEl.textContent = 'A senha precisa ter pelo menos 6 caracteres.'; return; }
+  errEl.textContent = 'Salvando...';
+  const { data, error } = await sb.auth.updateUser({ password: pw });
+  if(error){ errEl.textContent = error.message; return; }
+  document.getElementById('recoveryModal').style.display = 'none';
+  document.getElementById('recoveryPassword').value = '';
+  currentUser = data.user;
+  updateAccountUI();
+  await syncFromCloudAfterLogin();
+});
+
+async function initAuth(){
+  if(!sb) return;
+  try{
+    const { data } = await sb.auth.getSession();
+    if(data && data.session){
+      currentUser = data.session.user;
+      updateAccountUI();
+      await syncFromCloudAfterLogin();
+    }
+  }catch(err){ console.error('Erro ao verificar sessão', err); }
+}
+
+load();
+specLoad();
+initAuth();
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('sw.js').catch(()=>{ /* segue sem SW se não suportado */ });
+  });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+name: Manter Supabase ativo
+
+on:
+  schedule:
+    - cron: '0 9 * * 1,4'
+  workflow_dispatch:
+
+jobs:
+  ping-supabase:
+    runs-on: ubuntu-latest
+
+    env:
+      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+
+    steps:
+      - name: Consultar banco para evitar pausa por inatividade
+        run: |
+          curl --fail --silent --show-error \
+          -H "apikey: ${SUPABASE_ANON_KEY}" \
+          -H "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
+          "https://kinflfbkajhthfpfkkfs.supabase.co/rest/v1/senior_progress?select=id&limit=1"
+
+          echo "Ping enviado com sucesso em $(date -u)"
+          
